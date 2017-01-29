@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <openssl/md5.h>
 #include "utility.h"
 
 using namespace std;
@@ -17,15 +18,23 @@ void parse_stream(int argc, char *argv[]) {
 	}
 	string pphrase;
 	int len;
-	for (int i=2; i<4; i++) {
-		string opt(argv[i]);
-		if (opt.substr(0, 3) == "-p=") {
-			pphrase = opt.substr(3, -1);
-		} else if (opt.substr(0, 3) == "-l=") {
-			len = atoi(opt.substr(3, -1).c_str());
-		} else {
-			malformed_command();		
+	try {
+		for (int i=2; i<argc; i++) {
+			string opt(argv[i]);
+			if (opt.substr(0, 3) == "-p=") {
+				pphrase = opt.substr(3, -1);
+			} else if (opt.substr(0, 3) == "-l=") {
+				len = atoi(opt.substr(3, -1).c_str());
+			} else {
+				malformed_command();		
+			}
 		}
+	} catch(...) {
+		malformed_command();
+	}
+	if (len <= 0) {
+		cerr << "Len must be positive!" << endl;
+		exit(0);
 	}
 	key_stream(pphrase.c_str(), len);
 }
@@ -34,8 +43,27 @@ void parse_encrypt(int argc, char *argv[]) {
 	if (argc < 4 || argc > 5) {
 		malformed_command();
 	}
-	string pphrase, pbmfile;
-
+	string pphrase, pbmfile="", outfile;
+	for (int i = 2; i < argc; i++) {
+		string opt(argv[i]);
+		if (opt.substr(0, 3) == "-p==") {
+			pphrase = opt.substr(3, -1);
+		} else if (opt.substr(0, 5) == "-out=") {
+			outfile = opt.substr(5, -1);
+		} else {
+			pbmfile = opt;
+		}
+	}
+	if (pbmfile != "") {
+		ifstream in(pbmfile);
+		if (!in.is_open()) {
+			cerr << "File not exists!" << endl;
+			exit(0);
+		}
+		encrypt(pphrase.c_str(), outfile, in);
+	} else {
+		encrypt(pphrase.c_str(), outfile, cin);
+	}
 }
 
 void parse_cmd_run(int argc, char *argv[]) {
