@@ -7,6 +7,8 @@
 
 using namespace std;
 
+const bool DEBUG = true;
+
 void malformed_command() {
 	cerr << "Malformed command" << endl;
 	exit(1);
@@ -41,18 +43,23 @@ void parse_stream(int argc, char *argv[]) {
 
 void parse_encrypt(int argc, char *argv[]) {
 	if (argc < 4 || argc > 5) {
+		// cout << "hasdfj"<< endl;
 		malformed_command();
 	}
 	string pphrase, pbmfile="", outfile;
 	for (int i = 2; i < argc; i++) {
 		string opt(argv[i]);
-		if (opt.substr(0, 3) == "-p==") {
+		if (opt.substr(0, 3) == "-p=") {
 			pphrase = opt.substr(3, -1);
 		} else if (opt.substr(0, 5) == "-out=") {
 			outfile = opt.substr(5, -1);
 		} else {
 			pbmfile = opt;
 		}
+	}
+	if (DEBUG) {
+		cout << "pphrase: " << pphrase << ". outfile: " << outfile 
+			 << ". pbmfile: " << pbmfile << endl;
 	}
 	if (pbmfile != "") {
 		ifstream in(pbmfile);

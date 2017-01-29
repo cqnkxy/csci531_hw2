@@ -1,6 +1,7 @@
 *.pdf
 .DS_Store
 in
-out
+*out
 *.o
 hw2gi
+*.pbm
