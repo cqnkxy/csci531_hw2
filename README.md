@@ -7,7 +7,7 @@ type `make clean` to clear up *.o file and executable.
 
 ## Command
 
-### stream cipher: ./hw2 stream stream -p=pphrase -l=len
+### stream cipher: ./hw2 stream -p=pphrase -l=len
 The ASCII string pphrase contains the passphrase (which must not be empty) for key generation and len is the number of bytes to output.
 
 ### encrypt: ./hw2 encrypt -p=pphrase -out=name [pbmfile]
