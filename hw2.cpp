@@ -9,12 +9,14 @@ using namespace std;
 
 const bool DEBUG = true;
 
-void malformed_command() {
+void malformed_command() 
+{
 	cerr << "Malformed command" << endl;
 	exit(1);
 }
 
-void parse_stream(int argc, char *argv[]) {
+void parse_stream(int argc, char *argv[]) 
+{
 	if (argc != 4) {
 		malformed_command();
 	}
@@ -36,14 +38,14 @@ void parse_stream(int argc, char *argv[]) {
 	}
 	if (len <= 0) {
 		cerr << "Len must be positive!" << endl;
-		exit(0);
+		exit(1);
 	}
 	key_stream(pphrase.c_str(), len);
 }
 
-void parse_encrypt(int argc, char *argv[]) {
+void parse_encrypt(int argc, char *argv[]) 
+{
 	if (argc < 4 || argc > 5) {
-		// cout << "hasdfj"<< endl;
 		malformed_command();
 	}
 	string pphrase, pbmfile="", outfile;
@@ -65,23 +67,40 @@ void parse_encrypt(int argc, char *argv[]) {
 		ifstream in(pbmfile);
 		if (!in.is_open()) {
 			cerr << "File not exists!" << endl;
-			exit(0);
+			exit(1);
 		}
 		encrypt(pphrase.c_str(), outfile, in);
+		in.close();
 	} else {
 		encrypt(pphrase.c_str(), outfile, cin);
 	}
 }
 
-void parse_cmd_run(int argc, char *argv[]) {
+void parse_merge(int argc, char *argv[]) 
+{
+	if (argc != 4) {
+		malformed_command();
+	}
+	ifstream in1(argv[2]), in2(argv[3]);
+	if (!in1.is_open() || !in2.is_open()) {
+		cerr << "File not exists" << endl;
+		exit(1);
+	}
+	merge_2_file(in1, in2);
+	in1.close();
+	in2.close();
+}
+
+void parse_cmd_run(int argc, char *argv[]) 
+{
 	if (argc < 2) {
 		malformed_command();
 	} else if (strcmp(argv[1], "stream") == 0) {
 		parse_stream(argc, argv);		
 	} else if (strcmp(argv[1], "encrypt") == 0) {
 		parse_encrypt(argc, argv);
-	} else if (strcmp(argv[1], "dec-base64") == 0) {
-
+	} else if (strcmp(argv[1], "merge") == 0) {
+		parse_merge(argc, argv);
 	} else {
 		malformed_command();
 	}

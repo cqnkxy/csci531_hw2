@@ -5,9 +5,11 @@
 
 using namespace::std;
 
-bool DEBUG = true;
+const bool DEBUG = true;
+const string MAGIC = "P4";
 
-struct BitReader {
+struct BitReader 
+{
     BitReader(char const *p): cnt(7), kg(p) {
         cur_byte = kg.next();
     }
@@ -23,7 +25,8 @@ struct BitReader {
     KeyGenerator kg;
 };
 
-void key_stream(char const *p, int bytes) {
+void key_stream(char const *p, int bytes) 
+{
     KeyGenerator kg(p);
     for (int i = 0; i < bytes; ++i) {
         printf("%02x", kg.next());
@@ -38,7 +41,8 @@ void key_bit_stream(char const *p, int bytes) {
     cout << endl;
 }
 
-void fill_rows(bool pixel, bool key, vector<vector<bool> > &row1, vector<vector<bool> > &row2) {
+void fill_rows(bool pixel, bool key, vector<vector<bool> > &row1, vector<vector<bool> > &row2) 
+{
     if (!pixel) {
         if (!key) {
             // pixel=0, key=0
@@ -70,7 +74,8 @@ void fill_rows(bool pixel, bool key, vector<vector<bool> > &row1, vector<vector<
     }
 }
 
-void output(ofstream &out, vector<bool> &row) {
+void output(ofstream &out, vector<bool> &row) 
+{
     for (int i = 0; i < (int)row.size();) {
         unsigned char byte = 0;
         for (int j = 7; j > -1 && i < (int)row.size(); --j) {
@@ -82,9 +87,9 @@ void output(ofstream &out, vector<bool> &row) {
     }
 } 
 
-void encrypt(char const *p, string outfile, istream &in) {
+void encrypt(char const *p, string outfile, istream &in) 
+{
     BitReader brdr(p);
-    const string MAGIC = "P4";
     ofstream out0(outfile + ".1.pbm");
     ofstream out1(outfile + ".2.pbm");
     string cur;
@@ -121,4 +126,19 @@ void encrypt(char const *p, string outfile, istream &in) {
     }
     out0.close();
     out1.close();
+}
+
+void merge_2_file(istream &in1, istream &in2)
+{
+    int row, col;
+    string tmp;
+    unsigned char byte1, byte2;
+    // consume magic number
+    in1 >> tmp; in2 >> tmp;
+    in1 >> col >> row >> noskipws >> byte1;
+    in2 >> col >> row >> noskipws >> byte2;
+    cout << MAGIC << endl << col << " " << row << endl;
+    while ((in1 >> byte1) && (in2 >> byte2)) {
+        cout << (unsigned char)(byte1 | byte2);
+    }
 }

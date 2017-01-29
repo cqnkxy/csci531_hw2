@@ -6,5 +6,6 @@
 
 void key_stream(char const*, int);
 void encrypt(char const *p, std::string outfile, std::istream &in);
+void merge_2_file(std::istream &, std::istream &);
 
 #endif
