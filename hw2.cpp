@@ -7,7 +7,7 @@
 
 using namespace std;
 
-const bool DEBUG = true;
+const bool DEBUG = false;
 
 void malformed_command() 
 {
@@ -65,7 +65,7 @@ void parse_encrypt(int argc, char *argv[])
 			 << ". pbmfile: " << pbmfile << endl;
 	}
 	if (pbmfile != "") {
-		ifstream in(pbmfile);
+		ifstream in(pbmfile.c_str());
 		if (!in.is_open()) {
 			cerr << "File not exists!" << endl;
 			exit(1);

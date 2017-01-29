@@ -5,7 +5,7 @@
 
 using namespace::std;
 
-const bool DEBUG = true;
+const bool DEBUG = false;
 const string MAGIC = "P4";
 
 struct BitReader 
@@ -29,7 +29,7 @@ void key_stream(char const *p, int bytes)
 {
     KeyGenerator kg(p);
     for (int i = 0; i < bytes; ++i) {
-        printf("%02x", kg.next());
+        cout << kg.next();
     }
 }
 
@@ -91,8 +91,8 @@ void output(ofstream &out, vector<bool> &row)
 void encrypt(char const *p, string outfile, istream &in) 
 {
     BitReader brdr(p);
-    ofstream out0(outfile + ".1.pbm");
-    ofstream out1(outfile + ".2.pbm");
+    ofstream out0((outfile + ".1.pbm").c_str());
+    ofstream out1((outfile + ".2.pbm").c_str());
     string cur;
     int row, col;
     if (!(in >> cur) || cur != MAGIC) {
