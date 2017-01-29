@@ -11,7 +11,8 @@ const bool DEBUG = true;
 
 void malformed_command() 
 {
-	cerr << "Malformed command" << endl;
+	const string USAGE = "\n\thw2 stream -p=pphrase -l=len\n\thw2 encrypt -p=pphrase -out=name [pbmfile]\n\thw2 merge pbmfile1 pbmfile2\n\thw2 decrypt [pbmfile]\n";
+	cerr << "Malformed command. Use it as:" << endl << USAGE << endl;
 	exit(1);
 }
 
@@ -81,10 +82,17 @@ void parse_merge(int argc, char *argv[])
 	if (argc != 4) {
 		malformed_command();
 	}
+	if (strncmp(argv[2], "-", 1) == 0 || strncmp(argv[3], "-", 1) == 0) {
+		malformed_command();
+	}
 	ifstream in1(argv[2]), in2(argv[3]);
-	if (!in1.is_open() || !in2.is_open()) {
-		cerr << "File not exists" << endl;
+	if (!in1.is_open()) {
+		cerr << "File " << argv[2] << " not exists" << endl;
 		exit(1);
+	}
+	if (!in2.is_open()) {
+		cerr << "File " << argv[3] << " not exists" << endl;
+		exit(1);	
 	}
 	merge_2_file(in1, in2);
 	in1.close();
