@@ -72,10 +72,10 @@ void fill_rows(bool pixel, bool key, vector<vector<bool> > &row1, vector<vector<
 
 void output(ofstream &out, vector<bool> &row) {
     for (int i = 0; i < (int)row.size();) {
-        unsigned char byte = 0, bit = 1;
+        unsigned char byte = 0;
         for (int j = 7; j > -1 && i < (int)row.size(); --j) {
             if (row[i++]){
-                byte |= (bit << j);
+                byte |= (1 << j);
             }
         }
         out << byte;
@@ -93,11 +93,10 @@ void encrypt(char const *p, string outfile, istream &in) {
         cerr << "Magic number mismatch!" << endl;
         exit(1);
     }
-    // didn't take care of the comments
+    // didn't take care of comments in pbm
     unsigned char byte;
-    in >> col >> row;
-    // consume the new line character
-    in >> noskipws >> byte;
+    // also consume the new line character
+    in >> col >> row >> noskipws >> byte;
     out0 << MAGIC << endl << col*2 << " " << row*2 << endl;
     out1 << MAGIC << endl << col*2 << " " << row*2 << endl;
     // row1[0] first row of out0

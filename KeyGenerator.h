@@ -12,7 +12,9 @@ private:
 	void calMd5();
 private:
 	unsigned char md5_buf[MD5_DIGEST_LENGTH];
-    int i, cnt;
+	// i range from 00 to 99 as required by this assignment
+	// cnt indicates which byte of md5_buf to return
+    int i, cnt;	
     std::string pphrase;
 };
 
