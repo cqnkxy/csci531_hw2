@@ -74,6 +74,7 @@ void fill_rows(bool pixel, bool key, vector<vector<bool> > &row1, vector<vector<
     }
 }
 
+// Transform bool vec to byte and output to out.
 void output(ofstream &out, vector<bool> &row) 
 {
     for (int i = 0; i < (int)row.size();) {
@@ -140,5 +141,55 @@ void merge_2_file(istream &in1, istream &in2)
     cout << MAGIC << endl << col << " " << row << endl;
     while ((in1 >> byte1) && (in2 >> byte2)) {
         cout << (unsigned char)(byte1 | byte2);
+    }
+}
+
+void read_row(istream &in, int col_cnt, vector<bool> &row)
+{
+    unsigned char byte;
+    for (int i = 0; i < col_cnt;) {
+        in >> noskipws >> byte;
+        for (int j = 7; j >= 0 && i < col_cnt; --j, ++i) {
+            row.push_back((byte >> j) & 0x1);
+        }
+    }
+}
+
+
+// In fact we only need one row to do the decryption.
+vector<unsigned char> decrypt_2_row(vector<bool> &row1)
+{
+    vector<unsigned char> bytes;
+    for (int i = 0; i < (int)row1.size();) {
+        unsigned char byte = 0;
+        for (int j = 7; j >= 0 && i < (int)row1.size(); --j, i += 2) {
+            if (!row1[i] && !row1[i+1]) {
+                cerr << "Bad input for merged file!" << endl;
+                exit(1);
+            }
+            byte |= ((row1[i] & row1[i+1]) << j);
+        }
+        bytes.push_back(byte);
+    }
+    return bytes;
+}
+
+void decrypt(istream &in) 
+{
+    int row, col;
+    string tmp;
+    unsigned char byte;
+    in >> tmp >> col >> row >> noskipws >> byte;
+    vector<bool> row1, row2;
+    cout << MAGIC << endl << (col >> 1)<< " " << (row >> 1) << endl;
+    for (int i = 0; i < row; i += 2) {
+        row1.clear();
+        row2.clear();
+        read_row(in, col, row1);
+        read_row(in, col, row2);
+        vector<unsigned char> tmp = decrypt_2_row(row1);
+        for (int j = 0; j < (int)tmp.size(); ++j) {
+            cout << tmp[j];
+        }
     }
 }

@@ -91,6 +91,23 @@ void parse_merge(int argc, char *argv[])
 	in2.close();
 }
 
+void parse_decrypt(int argc, char *argv[]) 
+{
+	if (argc == 2) {
+		decrypt(cin);
+	} else if (argc == 3) {
+		ifstream in(argv[2]);
+		if (!in.is_open()) {
+			cerr << "File not exists" << endl;
+			exit(1);
+		}
+		decrypt(in);
+		in.close();
+	} else {
+		malformed_command();
+	}
+}
+
 void parse_cmd_run(int argc, char *argv[]) 
 {
 	if (argc < 2) {
@@ -101,6 +118,8 @@ void parse_cmd_run(int argc, char *argv[])
 		parse_encrypt(argc, argv);
 	} else if (strcmp(argv[1], "merge") == 0) {
 		parse_merge(argc, argv);
+	} else if (strcmp(argv[1], "decrypt") == 0) {
+		parse_decrypt(argc, argv);
 	} else {
 		malformed_command();
 	}
